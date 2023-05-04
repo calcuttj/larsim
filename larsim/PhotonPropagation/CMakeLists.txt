@@ -17,6 +17,7 @@ cet_make_library(LIBRARY_NAME PhotonVisibilityTypes INTERFACE
 cet_make_library(SOURCE
   PhotonLibrary.cxx
   PhotonLibraryHybrid.cxx
+  PhotonLibrarySplit.cxx
   PhotonPropagationUtils.cxx
   PropagationTimeModel.cxx
   SemiAnalyticalModel.cxx
@@ -89,6 +90,22 @@ cet_build_plugin(PDFastSimPAR art::EDProducer
 )
 
 cet_build_plugin(PDFastSimPVS art::EDProducer
+  LIBRARIES PRIVATE
+  larsim::PhotonPropagation_PhotonVisibilityService_service
+  larsim::PhotonPropagation
+  larsim::Simulation_LArG4Parameters_service
+  lardata::LArPropertiesService
+  lardataobj::Simulation
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Principal
+  art::Framework_Services_Registry
+  art_plugin_support::toolMaker
+  canvas::canvas
+  fhiclcpp::fhiclcpp
+  CLHEP::Random
+)
+
+cet_build_plugin(PDFastSimSplit art::EDProducer
   LIBRARIES PRIVATE
   larsim::PhotonPropagation_PhotonVisibilityService_service
   larsim::PhotonPropagation

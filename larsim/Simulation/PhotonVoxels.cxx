@@ -165,6 +165,10 @@ namespace sim {
     return ReturnVector;
   }
 
+  std::array<int, 3U> PhotonVoxelDef::GetVoxelCoords(geo::Point_t const& p) const {
+    return GetVoxelCoords(GetVoxelIDImpl(p));
+  }
+
   //----------------------------------------------------------------------------
   std::array<double, 3U> PhotonVoxelDef::GetVoxelStepCoordsUnchecked(geo::Point_t const& p) const
   {

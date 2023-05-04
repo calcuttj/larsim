@@ -29,6 +29,7 @@
 #include "larcorealg/Geometry/OpDetGeo.h"
 #include "larsim/PhotonPropagation/PhotonLibrary.h"
 #include "larsim/PhotonPropagation/PhotonLibraryHybrid.h"
+#include "larsim/PhotonPropagation/PhotonLibrarySplit.h"
 #include "larsim/Simulation/PhotonVoxels.h"
 
 // framework libraries
@@ -80,11 +81,15 @@ namespace phot {
     , fNx(0)
     , fNy(0)
     , fNz(0)
+    , fNSplitX(0)
+    , fNSplitY(0)
+    , fNSplitZ(0)
     , fUseCryoBoundary(false)
     , fLibraryBuildJob(false)
     , fDoNotLoadLibrary(false)
     , fParameterization(false)
     , fHybrid(false)
+    , fSplit(false)
     , fStoreReflected(false)
     , fStoreReflT0(false)
     , fIncludePropTime(false)
@@ -168,6 +173,12 @@ namespace phot {
 
           if (fHybrid) {
             fTheLibrary = new PhotonLibraryHybrid(LibraryFileWithPath, GetVoxelDef());
+          }
+          else if (fSplit) {
+            PhotonLibrarySplit * lib = new PhotonLibrarySplit(
+                GetVoxelDef(), fNSplitX, fNSplitY, fNSplitZ, geom->NOpDets());
+            fTheLibrary = lib;
+            lib->OpenFile(LibraryFileWithPath);
           }
           else {
             PhotonLibrary* lib = new PhotonLibrary;
@@ -260,6 +271,11 @@ namespace phot {
     fLibraryBuildJob = p.get<bool>("LibraryBuildJob", false);
     fParameterization = p.get<bool>("DUNE10ktParameterization", false);
     fHybrid = p.get<bool>("HybridLibrary", false);
+    fSplit = p.get<bool>("SplitLibrary", false);
+    //TODO -- add check for fSplit and NSplit{i} == 0
+    fNSplitX = p.get<size_t>("NSplitX", 0);
+    fNSplitY = p.get<size_t>("NSplitY", 0);
+    fNSplitZ = p.get<size_t>("NSplitZ", 0);
     fLibraryFile = p.get<std::string>("LibraryFile", "");
     fDoNotLoadLibrary = p.get<bool>("DoNotLoadLibrary");
     fStoreReflected = p.get<bool>("StoreReflected", false);
@@ -292,6 +308,11 @@ namespace phot {
         fYmax = CryoBounds.MaxY();
         fZmin = CryoBounds.MinZ();
         fZmax = CryoBounds.MaxZ();
+
+        std::cout << "Cryo boundaries: " << std::endl;
+        std::cout << fXmin << " " << fXmax << std::endl;
+        std::cout << fYmin << " " << fYmax << std::endl;
+        std::cout << fZmin << " " << fZmax << std::endl;
       }
       else {
         fXmin = p.get<double>("XMin");
@@ -830,5 +851,10 @@ namespace phot {
   {
     return fMapping->detectorToLibrary(p);
   }
+
+  /*(template <typename Point>
+  std::array<size_t, 3> PhotonVisibilityService::GetSplitRegion(Point const& p) const {
+
+  }*/
 
 } // namespace

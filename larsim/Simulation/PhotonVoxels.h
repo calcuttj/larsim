@@ -106,6 +106,8 @@ namespace sim {
     template <typename Point>
     int GetVoxelID(Point const& p) const;
 
+    std::array<int, 3U> GetVoxelCoords(geo::Point_t const& p) const;
+
     int GetVoxelID(double const*) const;
     bool IsLegalVoxelID(int) const;
 

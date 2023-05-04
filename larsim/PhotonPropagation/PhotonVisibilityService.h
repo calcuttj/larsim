@@ -16,6 +16,7 @@
 #include "larsim/PhotonPropagation/LibraryMappingTools/IPhotonMappingTransformations.h"
 #include "larsim/PhotonPropagation/PhotonVisibilityTypes.h"
 #include "larsim/Simulation/PhotonVoxels.h"
+#include "larsim/PhotonPropagation/PhotonLibrarySplit.h"
 
 #include "art/Framework/Services/Registry/ServiceDeclarationMacros.h"
 
@@ -30,6 +31,7 @@ class TF1;
 #include <memory> // std::unique_ptr<>
 #include <string>
 #include <vector>
+#include <array>
 
 ///General LArSoft Utilities
 namespace phot {
@@ -168,6 +170,48 @@ namespace phot {
     const sim::PhotonVoxelDef& GetVoxelDef() const { return fVoxelDef; }
     size_t NOpChannels() const;
 
+    size_t GetTreeIndex(size_t i, size_t j, size_t k) const {
+      if (fTheLibrary == 0) LoadLibrary();
+      if (!fSplit) return 0;
+
+      auto * lib = dynamic_cast<PhotonLibrarySplit*>(fTheLibrary);
+      return lib->GetTreeIndex(i, j, k);
+    }
+
+    std::array<size_t, 3> TreeIndexToRegion(size_t i) const {
+      if (fTheLibrary == 0) LoadLibrary();
+      if (!fSplit) return {0, 0, 0};
+
+      auto * lib = dynamic_cast<PhotonLibrarySplit*>(fTheLibrary);
+      return lib->TreeIndexToRegion(i);
+    }
+
+    bool GetIsSplit() const { return fSplit; }
+    std::array<size_t, 3> GetSplitVals() const {
+      return {fNSplitX, fNSplitY, fNSplitZ};
+    }
+
+    template <typename Point>
+    std::array<size_t, 3> GetSplitRegion(Point const& p) const {
+      if (!fSplit) return {0, 0, 0};
+
+      if (fTheLibrary == 0) LoadLibrary();
+
+      std::array<int, 3> voxel = VoxelCoordsAt(geo::vect::toPoint(p));
+      auto * lib = dynamic_cast<PhotonLibrarySplit*>(fTheLibrary);
+      return lib->GetSplitRegion(
+          (size_t)voxel[0], (size_t)voxel[1], (size_t)voxel[2]);
+    }
+
+    void LoadSplitLibrary(size_t ix, size_t iy, size_t iz) const {
+      if (!fSplit) return;
+
+      if (fTheLibrary == 0) LoadLibrary();
+
+      auto * lib = dynamic_cast<PhotonLibrarySplit*>(fTheLibrary);
+      lib->LoadLibraryFromFile(ix, iy, iz);
+    }
+
   private:
     int fCurrentVoxel;
     double fCurrentValue;
@@ -178,6 +222,7 @@ namespace phot {
     float fYmin, fYmax;
     float fZmin, fZmax;
     int fNx, fNy, fNz;
+    size_t fNSplitX, fNSplitY, fNSplitZ;
 
     bool fUseCryoBoundary;
 
@@ -185,6 +230,7 @@ namespace phot {
     bool fDoNotLoadLibrary;
     bool fParameterization;
     bool fHybrid;
+    bool fSplit;
     bool fStoreReflected;
     bool fStoreReflT0;
     bool fIncludePropTime;
@@ -269,6 +315,9 @@ namespace phot {
     geo::Point_t LibLocation(geo::Point_t const& p) const;
 
     int VoxelAt(geo::Point_t const& p) const { return fVoxelDef.GetVoxelID(LibLocation(p)); }
+    std::array<int, 3> VoxelCoordsAt(geo::Point_t const& p) const {
+        return fVoxelDef.GetVoxelCoords(LibLocation(p));
+    }
 
     // same as `doGetVisibility()` but the channel number refers to the library
     // ID rather than to the actual optical detector ID.
