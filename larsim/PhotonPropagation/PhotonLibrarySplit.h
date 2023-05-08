@@ -1,6 +1,6 @@
 ////# PhotonLibrarySplit.h header file
 ////#
-////# Jake Calcutt, MIT, 2023
+////# Jake Calcutt, 2023
 #ifndef PHOTONLIBRARYSPLIT_H
 #define PHOTONLIBRARYSPLIT_H
 
