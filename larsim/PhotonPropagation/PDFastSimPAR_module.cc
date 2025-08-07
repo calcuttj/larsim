@@ -610,14 +610,14 @@ namespace phot {
     if (fUseLitePhotons) {
 
       for (auto& iopbtr : opbtr_helper) {
-        opbtr->emplace_back(iopbtr.second);
+        opbtr->emplace_back(std::move(iopbtr.second));
       }
 
       event.put(move(phlit));
       event.put(move(opbtr));
       if (fDoReflectedLight) {
         for (auto& iopbtr : opbtr_helper_ref) {
-          opbtr_ref->emplace_back(iopbtr.second);
+          opbtr_ref->emplace_back(std::move(iopbtr.second));
         }
         event.put(move(phlit_ref), "Reflected");
         event.put(move(opbtr_ref), "Reflected");
