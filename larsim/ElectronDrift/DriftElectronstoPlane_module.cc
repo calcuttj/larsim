@@ -177,7 +177,7 @@ namespace detsim {
         .ElectronLifetime(); // Electron lifetime as returned by the DetectorProperties service assumed to be in us;
     for (int i = 0; i < 3; ++i) {
       double driftVelocity =
-        detProp.DriftVelocity(detProp.Efield(i),
+        detProp.DriftVelocity(detProp.PerPlaneEfield(i),
                               detProp.Temperature()) *
         1.e-3; //  Drift velocity as returned by the DetectorProperties service assumed to be in cm/us. Multiply by 1.e-3 to convert into LArSoft standard velocity units, cm/ns;
 

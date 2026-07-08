@@ -53,7 +53,7 @@ namespace larg4 {
 
     double recomb = 0.;
     double dEdx = (ds <= 0.0) ? 0.0 : e / ds;
-    double EFieldStep = EFieldAtStep(detProp.Efield(), edep);
+    double EFieldStep = EFieldAtStep(detProp.PerPlaneEfield(), edep);
 
     // Guard against spurious values of dE/dx. Note: assumes density of LAr
     if (dEdx < 1.) { dEdx = 1.; }

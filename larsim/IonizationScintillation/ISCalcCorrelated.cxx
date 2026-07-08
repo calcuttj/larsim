@@ -90,7 +90,7 @@ namespace larg4 {
     double ds = edep.StepLength();
     double dEdx = (ds <= 0.0) ? 0.0 : energy_deposit / ds;
     dEdx = (dEdx < 1.) ? 1. : dEdx;
-    double EFieldStep = EFieldAtStep(detProp.Efield(), edep);
+    double EFieldStep = EFieldAtStep(detProp.PerPlaneEfield(), edep);
     double recomb = 0., num_electrons = 0.;
 
     //calculate recombination survival fraction value inside, otherwise zero
@@ -103,7 +103,7 @@ namespace larg4 {
       }
       else if (fUseEllipsModBoxRecomb) {
 
-        double phi = AngleToEFieldAtStep(detProp.Efield(), edep);
+        double phi = AngleToEFieldAtStep(detProp.PerPlaneEfield(), edep);
 
         if (std::isnan(phi)) {
           double Xi = fModBoxB * dEdx / EFieldStep;

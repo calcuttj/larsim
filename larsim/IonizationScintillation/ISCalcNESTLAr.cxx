@@ -64,7 +64,7 @@ namespace larg4 {
 
     double DokeBirks[3];
 
-    double eField = EFieldAtStep(detProp.Efield(), edep);
+    double eField = EFieldAtStep(detProp.PerPlaneEfield(), edep);
     if (eField) {
       DokeBirks[0] = 0.07 * pow((eField / 1.0e3), -0.85);
       DokeBirks[2] = 0.00;

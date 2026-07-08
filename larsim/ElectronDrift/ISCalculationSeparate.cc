@@ -65,7 +65,7 @@ namespace detsim {
     float z = edep.MidPointZ();
     double recomb = 0.;
     double dEdx = (ds <= 0.0) ? 0.0 : e / ds;
-    double EFieldStep = EFieldAtStep(detProp.Efield(), x, y, z);
+    double EFieldStep = EFieldAtStep(detProp.PerPlaneEfield(), x, y, z);
 
     // Guard against spurious values of dE/dx. Note: assumes density of LAr
     if (dEdx < 1.) dEdx = 1.;
